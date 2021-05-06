@@ -11,11 +11,12 @@ const { authenticateUser } = require("../middleware/auth-user")
  * @route   GET /api/users
  * @access  PUBLIC
  */
-router.get("/", authenticateUser, asyncHandler(async (request, response) => {
+router.get("/users", authenticateUser, asyncHandler(async (request, response) => {
     const user = request.currentUser;
-
+    console.log(user)
     response.status(200);
     response.json({
+        id: user.dataValues.id,
         firstName: user.firstName,
         lastName: user.lastName,
         emailAddress: user.emailAddress
@@ -28,10 +29,11 @@ router.get("/", authenticateUser, asyncHandler(async (request, response) => {
  * @route   GET /api/users
  * @access  PUBLIC
  */
-router.post("/", asyncHandler(async (request, response, next) => {
+router.post("/users", asyncHandler(async (request, response, next) => {
     try {
-        const user = await User.create(request.body);
-        console.log("POST USER: ", user)
+        console.log(request.body)
+        await User.create(request.body);
+        response.status(201).location("/").end();
     } catch (error) {
         response.error = error;
         next();

@@ -3,7 +3,8 @@
 // load modules
 const express = require('express');
 const morgan = require('morgan');
-const userRoutes = require('./routes/user')
+const user = require('./routes/user')
+const { sequelize, Sequelize } = require("./models")
 // variable to enable global error logging
 const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'true';
 
@@ -15,6 +16,19 @@ const app = express();
 app.use(morgan('dev'));
 app.use(express.json());
 
+// Ensures connection to the database exists.
+(async () => {
+  try {
+    await sequelize.sync();
+    console.log('Models are synchronized with the database!');
+
+    await sequelize.authenticate();
+    console.log('Connection to the database successful!');
+
+  } catch (error) {
+    console.log('Error connecting to the database: ', error);
+  }
+})();
 
 // setup a friendly greeting for the root route
 app.get('/', (req, res) => {
@@ -23,7 +37,7 @@ app.get('/', (req, res) => {
   });
 });
 
-app.use("/api/users", userRoutes)
+app.use("/api", user)
 
 // send 404 if no other route matched
 app.use((req, res) => {

@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
-const { Model, DataTypes, Sequelize } = require("sequelize");
+const Sequelize = require('sequelize');
 
 // Course has 1-to-1 association
 module.exports = (sequelize) => {
-    class Course extends Model { }
+    class Course extends Sequelize.Model { }
     // Course attributes are, title, description, estimatedTime, materialsNeeded
     Course.init({
         id: {
@@ -13,32 +13,30 @@ module.exports = (sequelize) => {
             autoIncrement: true,
         },
         title: {
-            type: DataTypes.STRING,
+            type: Sequelize.STRING,
             // allowNull: false,
         },
         description: {
-            type: DataTypes.TEXT,
+            type: Sequelize.TEXT,
             // allowNull: false,
         },
         estimatedTime: {
-            type: DataTypes.STRING,
+            type: Sequelize.STRING,
             // allowNull: false,
         },
         materialsNeeded: {
-            type: DataTypes.STRING,
+            type: Sequelize.STRING,
 
         }
     }, { sequelize });
+    //belongsTo side of relationship
     Course.associate = (models) => {
-        // A course that can only be associated with one user.
-        console.log(models)
         Course.belongsTo(models.User, {
-            as: "Student",
             foreignKey: {
-                fieldName: 'userStudentId',
-                // allowNull: false,
-            }
-        })
+                fieldName: 'userId',
+                allowNull: false
+            },
+        });
     }
     return Course;
 }

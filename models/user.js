@@ -1,10 +1,9 @@
-'use strict';
+'use strict'
 
 const Sequelize = require('sequelize');
-const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-    class User extends Model { }
+    class User extends Sequelize.Model { }
     // User attributes are, firstName, lastName, emailAddress, password
     User.init({
         id: {
@@ -13,32 +12,30 @@ module.exports = (sequelize) => {
             autoIncrement: true,
         },
         firstName: {
-            type: DataTypes.STRING,
+            type: Sequelize.STRING,
             // allowNull: false,
         },
         lastName: {
-            type: DataTypes.STRING,
+            type: Sequelize.STRING,
             // allowNull: false,
         },
         emailAddress: {
-            type: DataTypes.STRING,
+            type: Sequelize.STRING,
             // allowNull: false,
         },
         password: {
-            type: DataTypes.STRING,
+            type: Sequelize.STRING,
             // allowNull: false,
         }
     }, { sequelize });
-
+    //Has Many relationship side
     User.associate = (models) => {
-        console.log(models)
         User.hasMany(models.Course, {
-            as: "Student",
             foreignKey: {
-                fieldName: 'userStudentId',
-                // allowNull: false,
-            },
+                fieldName: 'userId',
+                allowNull: false
+            }
         });
-    };
+    }
     return User;
 }
