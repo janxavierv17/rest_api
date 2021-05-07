@@ -15,12 +15,20 @@ router.get("/users", authenticateUser, asyncHandler(async (request, response) =>
     let user
     try {
         user = request.currentUser;
+        const getUser = await User.findOne({
+            where: {
+                id: user.dataValues.id
+            },
+            attributes: {
+                exclude: ["password", "createdAt", "updatedAt"]
+            }
+        })
         // This way of sending a response to the request is filtering out password.
         response.status(200).json({
-            id: user.dataValues.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            emailAddress: user.emailAddress
+            id: getUser.dataValues.id,
+            firstName: getUser.dataValues.firstName,
+            lastName: getUser.dataValues.lastName,
+            emailAddress: getUser.dataValues.emailAddress,
         })
     } catch (error) {
         console.log("THE ERROR:", error.name)
@@ -28,7 +36,7 @@ router.get("/users", authenticateUser, asyncHandler(async (request, response) =>
             const errors = error.errors.map(error => error.message)
             response.status(400).json({ errors })
         } else {
-            response.status(500).json({ message: "Something went wrong." })
+            throw error;
         }
     }
 }));

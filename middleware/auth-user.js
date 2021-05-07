@@ -22,10 +22,7 @@ exports.authenticateUser = async (request, response, next) => {
                 },
             }
         )
-        console.log("User with exclude: ", user)
-
         if (user) {
-            console.log("User Password:", user.password)
             const authenticated = bcrypt.compareSync(credentials.pass, user.password);
 
             request.currentUser = user;

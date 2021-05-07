@@ -12,7 +12,12 @@ const { authenticateUser } = require("../middleware/auth-user")
  * @access  PUBLIC
  */
 router.get("/courses", asyncHandler(async (request, response) => {
-    const courses = await Course.findAll()
+    const courses = await Course.findAll({
+        attributes: {
+            exclude: ["createdAt", "updatedAt"]
+        }
+    })
+    console.log(courses)
     response.status(200).json({ courses })
 }))
 
@@ -29,8 +34,7 @@ router.get("/courses/:id", asyncHandler(async (request, response) => {
             exclude: ["createdAt", "updatedAt"]
         }
     })
-    console.log("The course that matches the params ID: ", course)
-    response.status(201).json({ message: `A course is not yet created but here's the ID ${request.params.id}` })
+    response.status(201).json({ course })
 }))
 
 /**
@@ -81,7 +85,6 @@ router.put("/courses/:id", authenticateUser, asyncHandler(async (request, respon
                 response.sendStatus(403).json({ message: "You're not the creator of this course." });
             }
         }
-
     } catch (error) {
         if (error.name === 'SequelizeValidationError' && response.status(400)) {
             const errors = error.errors.map(error => error.message)
