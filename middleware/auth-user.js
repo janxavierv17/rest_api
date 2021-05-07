@@ -6,7 +6,7 @@ const { User } = require("../models");
 
 exports.authenticateUser = async (request, response, next) => {
     let message;
-    const credentials = auth(request)
+    const credentials = (auth(request));
     console.log(credentials)
 
     if (credentials) {
@@ -25,7 +25,9 @@ exports.authenticateUser = async (request, response, next) => {
         console.log("User with exclude: ", user)
 
         if (user) {
+            console.log("User Password:", user.password)
             const authenticated = bcrypt.compareSync(credentials.pass, user.password);
+
             request.currentUser = user;
 
             if (authenticated) {
@@ -40,7 +42,7 @@ exports.authenticateUser = async (request, response, next) => {
         }
     } else {
         // A vague message for security.
-        // If we provide a "Username not found" or "Incorrect passwor"
+        // If we provide a "Username not found" or "Incorrect password"
         // would inadvertently help anyone attempting to hack a user account.
         message = 'Auth header not found.';
     }

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { asyncHandler } = require('../middleware/async-handler');
 const User = require("../models").User
+const bcrypt = require("bcrypt")
 const { authenticateUser } = require("../middleware/auth-user")
 
 /**
@@ -23,15 +24,20 @@ router.get("/users", authenticateUser, asyncHandler(async (request, response) =>
 }));
 
 /**
- * @desc    A route that will create a new user, 
+ * @desc    A route that will create a new user and hash user password, 
  *          along with a 200 HTTP Status Code.
  * @route   GET /api/users
  * @access  PUBLIC
  */
 router.post("/users", asyncHandler(async (request, response, next) => {
     try {
-        console.log(request.body)
-        await User.create(request.body);
+        const { firstName, lastName, emailAddress, password } = request.body
+        await User.create({
+            firstName: firstName,
+            lastName: lastName,
+            emailAddress: emailAddress,
+            password: bcrypt.hashSync(password, 10)
+        });
         response.status(201).location("/").end();
     } catch (error) {
         // This route checks and handles SequelizeValidationError or SequelizeUniqueConstraintError
