@@ -33,7 +33,7 @@ router.get("/courses/:id", asyncHandler(async (request, response) => {
             exclude: ["createdAt", "updatedAt"]
         }
     })
-    response.status(201).json({ course })
+    response.status(200).json({ course })
 }))
 
 /**
@@ -85,7 +85,7 @@ router.put("/courses/:id", authenticateUser, asyncHandler(async (request, respon
             }
         }
     } catch (error) {
-        if (error.name === 'SequelizeValidationError' && response.status(400)) {
+        if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
             const errors = error.errors.map(error => error.message)
             response.status(400).json({ errors })
         } else {

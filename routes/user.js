@@ -31,7 +31,7 @@ router.get("/users", authenticateUser, asyncHandler(async (request, response) =>
             emailAddress: getUser.dataValues.emailAddress,
         })
     } catch (error) {
-        if (error.name === "SequelizeValidationError" || error.name === "SequelizeUniqueConstraintError") {
+        if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
             const errors = error.errors.map(error => error.message)
             response.status(400).json({ errors })
         } else {
@@ -58,7 +58,7 @@ router.post("/users", asyncHandler(async (request, response, next) => {
         response.status(201).location("/").end();
     } catch (error) {
         // This route checks and handles SequelizeValidationError or SequelizeUniqueConstraintError
-        if (error.name === "SequelizeValidationError" || error.name === "SequelizeUniqueConstraintError") {
+        if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
             const errors = error.errors.map(error => error.message)
             response.status(400).json({ errors })
         } else {
