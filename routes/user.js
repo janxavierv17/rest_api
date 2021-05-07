@@ -12,15 +12,25 @@ const { authenticateUser } = require("../middleware/auth-user")
  * @access  PRIVATE / Authenticated User Only.
  */
 router.get("/users", authenticateUser, asyncHandler(async (request, response) => {
-    const user = request.currentUser;
-    response.status(200);
-    // This way of sending a response to the request is filtering out password.
-    response.json({
-        id: user.dataValues.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        emailAddress: user.emailAddress
-    })
+    let user
+    try {
+        user = request.currentUser;
+        // This way of sending a response to the request is filtering out password.
+        response.status(200).json({
+            id: user.dataValues.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            emailAddress: user.emailAddress
+        })
+    } catch (error) {
+        console.log("THE ERROR:", error.name)
+        if (error.name === "SequelizeValidationError" || error.name === "SequelizeUniqueConstraintError") {
+            const errors = error.errors.map(error => error.message)
+            response.status(400).json({ errors })
+        } else {
+            response.status(500).json({ message: "Something went wrong." })
+        }
+    }
 }));
 
 /**
@@ -41,12 +51,11 @@ router.post("/users", asyncHandler(async (request, response, next) => {
         response.status(201).location("/").end();
     } catch (error) {
         // This route checks and handles SequelizeValidationError or SequelizeUniqueConstraintError
-        console.log("ERROR: ", error.name)
         if (error.name === "SequelizeValidationError" || error.name === "SequelizeUniqueConstraintError") {
             const errors = error.errors.map(error => error.message)
             response.status(400).json({ errors })
         } else {
-            throw error;
+            response.status(400).json()
         }
     }
 }))

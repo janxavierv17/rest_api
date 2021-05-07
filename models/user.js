@@ -14,10 +14,26 @@ module.exports = (sequelize) => {
         firstName: {
             type: Sequelize.STRING,
             allowNull: false,
+            validate: {
+                notNull: {
+                    msg: "Please provide your first name.",
+                },
+                notEmpty: {
+                    msg: "Your name is required."
+                }
+            }
         },
         lastName: {
             type: Sequelize.STRING,
             allowNull: false,
+            validate: {
+                notNull: {
+                    msg: "Please provide your last name.",
+                },
+                notEmpty: {
+                    msg: "Your last name is required."
+                }
+            }
         },
         emailAddress: {
             type: Sequelize.STRING,
