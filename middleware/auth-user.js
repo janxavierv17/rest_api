@@ -10,7 +10,19 @@ exports.authenticateUser = async (request, response, next) => {
     console.log(credentials)
 
     if (credentials) {
-        const user = await User.findOne({ where: { emailAddress: credentials.name } })
+        const user = await User.findOne(
+            {
+                where: {
+                    emailAddress: credentials.name
+                },
+                // Unable to filter out password here as password is a required attribute.
+                // filtered out password from the route by explicitly passing the attributes that we want.
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt'],
+                },
+            }
+        )
+        console.log("User with exclude: ", user)
 
         if (user) {
             const authenticated = bcrypt.compareSync(credentials.pass, user.password);

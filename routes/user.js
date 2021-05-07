@@ -4,7 +4,6 @@ const { asyncHandler } = require('../middleware/async-handler');
 const User = require("../models").User
 const { authenticateUser } = require("../middleware/auth-user")
 
-
 /**
  * @desc    A route that will return the currently authenticated user 
  *          along with a 200 HTTP Status Code.
@@ -13,8 +12,8 @@ const { authenticateUser } = require("../middleware/auth-user")
  */
 router.get("/users", authenticateUser, asyncHandler(async (request, response) => {
     const user = request.currentUser;
-    console.log(user)
     response.status(200);
+    // This way of sending a response to the request is filtering out password.
     response.json({
         id: user.dataValues.id,
         firstName: user.firstName,
@@ -35,8 +34,14 @@ router.post("/users", asyncHandler(async (request, response, next) => {
         await User.create(request.body);
         response.status(201).location("/").end();
     } catch (error) {
-        response.error = error;
-        next();
+        // This route checks and handles SequelizeValidationError or SequelizeUniqueConstraintError
+        console.log("ERROR: ", error.name)
+        if (error.name === "SequelizeValidationError" || error.name === "SequelizeUniqueConstraintError") {
+            const errors = error.errors.map(error => error.message)
+            response.status(400).json({ errors })
+        } else {
+            throw error;
+        }
     }
 }))
 

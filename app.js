@@ -16,17 +16,14 @@ const app = express();
 app.use(morgan('dev'));
 app.use(express.json());
 
-// Ensures connection to the database exists.
+// Test the database connection.
 (async () => {
+  console.log('Syncing ...');
   try {
-    await sequelize.sync();
-    console.log('Models are synchronized with the database!');
-
     await sequelize.authenticate();
-    console.log('Connection to the database successful!');
-
+    console.log('Connection has been established successfully.');
   } catch (error) {
-    console.log('Error connecting to the database: ', error);
+    console.error('Unable to connect to the database:', error);
   }
 })();
 

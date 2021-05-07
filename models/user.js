@@ -1,6 +1,6 @@
 'use strict'
 
-const Sequelize = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
     class User extends Sequelize.Model { }
@@ -13,19 +13,42 @@ module.exports = (sequelize) => {
         },
         firstName: {
             type: Sequelize.STRING,
-            // allowNull: false,
+            allowNull: false,
         },
         lastName: {
             type: Sequelize.STRING,
-            // allowNull: false,
+            allowNull: false,
         },
         emailAddress: {
             type: Sequelize.STRING,
-            // allowNull: false,
+            allowNull: false,
+            unique: {
+                msg: "The email you've entered already exists."
+            },
+            validate: {
+                notNull: {
+                    msg: "An email is required."
+                },
+                isEmail: {
+                    msg: "Please provide a valid email."
+                }
+            }
         },
         password: {
-            type: Sequelize.STRING,
-            // allowNull: false,
+            type: DataTypes.VIRTUAL,
+            allowNull: false,
+            validate: {
+                notNull: {
+                    msg: "A password is required.",
+                },
+                notEmpty: {
+                    msg: "Please provide a password.",
+                },
+                len: {
+                    args: [8, 20],
+                    msg: "The password should be between 8 and 20 characters in length."
+                }
+            }
         }
     }, { sequelize });
     //Has Many relationship side
