@@ -17,7 +17,6 @@ router.get("/courses", asyncHandler(async (request, response) => {
             exclude: ["createdAt", "updatedAt"]
         }
     })
-    console.log(courses)
     response.status(200).json({ courses })
 }))
 
@@ -106,12 +105,10 @@ router.delete("/courses/:id", authenticateUser, asyncHandler(async (request, res
     const course = await Course.findByPk(request.params.id)
 
     if (course.dataValues.userId === creator.dataValues.id) {
-        console.info("You're the creator of this course.")
         course.destroy();
-        response.status(204).end();
+        response.status(204).json({ message: "You're the creator of this course." })
     } else {
-        console.log("You're not the creator of this course.")
-        response.status(403).end();
+        response.status(403).json({ message: "You're not the creator of this course." })
     }
 }))
 

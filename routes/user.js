@@ -31,7 +31,6 @@ router.get("/users", authenticateUser, asyncHandler(async (request, response) =>
             emailAddress: getUser.dataValues.emailAddress,
         })
     } catch (error) {
-        console.log("THE ERROR:", error.name)
         if (error.name === "SequelizeValidationError" || error.name === "SequelizeUniqueConstraintError") {
             const errors = error.errors.map(error => error.message)
             response.status(400).json({ errors })
