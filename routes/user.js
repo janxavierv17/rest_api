@@ -9,7 +9,7 @@ const { authenticateUser } = require("../middleware/auth-user")
  * @desc    A route that will return the currently authenticated user 
  *          along with a 200 HTTP Status Code.
  * @route   GET /api/users
- * @access  PUBLIC
+ * @access  PRIVATE / Authenticated User Only.
  */
 router.get("/users", authenticateUser, asyncHandler(async (request, response) => {
     const user = request.currentUser;
