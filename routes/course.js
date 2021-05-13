@@ -27,12 +27,20 @@ router.get("/courses", asyncHandler(async (request, response) => {
  */
 router.get("/courses/:id", asyncHandler(async (request, response) => {
     // Excludes createdAt & updatedAt
-    const course = await Course.findOne({
-        where: { id: request.params.id },
+    const course = await Course.findByPk(req.params.id, {
         attributes: {
-            exclude: ["createdAt", "updatedAt"]
-        }
-    })
+            exclude: ['password', 'createdAt', 'updatedAt']
+        },
+        include: [
+            {
+                model: User,
+                as: 'User',
+                attributes: {
+                    exclude: ['password', 'createdAt', 'updatedAt']
+                },
+            }
+        ]
+    });
     response.status(200).json({ course })
 }))
 
